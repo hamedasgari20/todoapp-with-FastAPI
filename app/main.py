@@ -1,31 +1,37 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-import models
+from app import models
+from app.database import SessionLocal
+from app.models import TaskResponse
 
 app = FastAPI()
 
-# Configure the database connection
-DATABASE_URL = "postgresql://user:password@localhost/db"
-engine = create_engine(DATABASE_URL)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-@app.post("/tasks/", response_model=models.Task)
-def create_task(task: models.Task):
+def get_db():
     db = SessionLocal()
-    db_task = models.Task(**task.dict())
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@app.post("/tasks/", response_model=TaskResponse)
+def create_task(task: TaskResponse):
+    db = SessionLocal()
+    db_task = models.Task(**task.model_dump())
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
     db.close()
-    return db_task
+    task_response = TaskResponse(
+        id=db_task.id,
+        title=db_task.title,
+        description=db_task.description
+    )
+    return task_response
 
-
-@app.get("/tasks/{task_id}", response_model=models.Task)
+@app.get("/tasks/{task_id}", response_model=TaskResponse)
 def read_task(task_id: int):
     db = SessionLocal()
     task = db.query(models.Task).filter(models.Task.id == task_id).first()
@@ -35,8 +41,8 @@ def read_task(task_id: int):
     return task
 
 
-@app.put("/tasks/{task_id}", response_model=models.Task)
-def update_task(task_id: int, updated_task: models.Task):
+@app.put("/tasks/{task_id}", response_model=TaskResponse)
+def update_task(task_id: int, updated_task: TaskResponse):
     db = SessionLocal()
     task = db.query(models.Task).filter(models.Task.id == task_id).first()
     if task is None:
@@ -52,7 +58,7 @@ def update_task(task_id: int, updated_task: models.Task):
     return task
 
 
-@app.delete("/tasks/{task_id}", response_model=models.Task)
+@app.delete("/tasks/{task_id}", response_model=TaskResponse)
 def delete_task(task_id: int):
     db = SessionLocal()
     task = db.query(models.Task).filter(models.Task.id == task_id).first()
