@@ -36,12 +36,17 @@ pip install -r requirements.txt
 docker-compose up -d
 ```
 
-4- Apply the initial database migration using Alembic:
+4- Create migration file:
+```angular2html
+alembic revision --autogenerate -m "first migrations"
+```
+
+5- Apply the initial database migration using Alembic:
 ```angular2html
 alembic upgrade head
 ```
 
-5- Start the FastAPI server:
+6- Start the FastAPI server:
 ```angular2html
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
@@ -54,7 +59,7 @@ If you need to make changes to the database schema or add new tables, you can cr
 
 1- Create a new migration script:
 ```angular2html
-alembic revision -m "your_migration_name"
+alembic revision --autogenerate -m "your_migration_name"
 ```
 This generates a new migration script in the **alembic/versions/** directory.
 
