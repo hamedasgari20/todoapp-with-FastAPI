@@ -56,9 +56,9 @@ def update_task_crud(task_id: int, updated_task: TaskResponse):
         return None
     for key, value in updated_task.dict(exclude_unset=True).items():
         setattr(task, key, value)
-    # db.commit()
+    db.add(task)
+    db.commit()
     db.refresh(task)
-    db.close()
     return task
 
 
