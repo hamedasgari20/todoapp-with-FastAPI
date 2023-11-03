@@ -2,3 +2,5 @@ fastapi[all]
 sqlalchemy
 psycopg2-binary
 alembic
+pytest
+factory-boy
