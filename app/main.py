@@ -20,7 +20,7 @@ def get_db():
 @app.post("/tasks/", response_model=TaskResponse)
 def create_task(task: TaskResponse, db: Session = Depends(get_db)):
     task_dict = task.dict()
-    task = Task.create(db, task_dict)
+    task = Task.create(db, **task_dict)
     return task
 
 
@@ -35,17 +35,19 @@ def read_task(task_id: int, db: Session = Depends(get_db)):
 @app.put("/tasks/{task_id}", response_model=TaskResponse)
 def update_task(task_id: int, updated_task: TaskResponse, db: Session = Depends(get_db)):
     task_dict = updated_task.dict()
-    updated_task = Task.update(db, task_id, task_dict)
-    if updated_task is None:
+    task = Task.get(db, task_id)
+    if task is None:
         return {"error": "Task not found"}
     else:
+        updated_task = task.update(db, **task_dict)
         return updated_task
 
 
 @app.delete("/tasks/{task_id}")
 def delete_task(task_id: int, db: Session = Depends(get_db)):
-    deleted_task = Task.delete(db, task_id)
-    if deleted_task is None:
+    task = Task.get(db, task_id)
+    if task is None:
         return {"error": "Task not found"}
     else:
+        deleted_task = task.delete(db)
         return {"message": "Task deleted successfully"}
