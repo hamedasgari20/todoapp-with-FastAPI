@@ -2,8 +2,8 @@ from fastapi import FastAPI, Depends
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.crud.task import create_task_crud, read_task_crud, update_task_crud, delete_task_crud
 from app.db.database import SessionLocal
+from app.models.task import Task
 from app.schemas.task import TaskResponse
 
 app = FastAPI()
@@ -19,12 +19,14 @@ def get_db():
 
 @app.post("/tasks/", response_model=TaskResponse)
 def create_task(task: TaskResponse, db: Session = Depends(get_db)):
-    return create_task_crud(db, task)
+    task_dict = task.dict()
+    task = Task.create(db, task_dict)
+    return task
 
 
 @app.get("/tasks/{task_id}", response_model=TaskResponse)
 def read_task(task_id: int, db: Session = Depends(get_db)):
-    task = read_task_crud(db, task_id)
+    task = Task.get(db, task_id)
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
@@ -32,15 +34,18 @@ def read_task(task_id: int, db: Session = Depends(get_db)):
 
 @app.put("/tasks/{task_id}", response_model=TaskResponse)
 def update_task(task_id: int, updated_task: TaskResponse, db: Session = Depends(get_db)):
-    task = update_task_crud(db, task_id, updated_task)
-    if task is None:
-        raise HTTPException(status_code=404, detail="Task not found")
-    return task
+    task_dict = updated_task.dict()
+    updated_task = Task.update(db, task_id, task_dict)
+    if updated_task is None:
+        return {"error": "Task not found"}
+    else:
+        return updated_task
 
 
-@app.delete("/tasks/{task_id}", response_model=TaskResponse)
+@app.delete("/tasks/{task_id}")
 def delete_task(task_id: int, db: Session = Depends(get_db)):
-    task = delete_task_crud(db, task_id)
-    if task is None:
-        raise HTTPException(status_code=404, detail="Task not found")
-    return task
+    deleted_task = Task.delete(db, task_id)
+    if deleted_task is None:
+        return {"error": "Task not found"}
+    else:
+        return {"message": "Task deleted successfully"}
