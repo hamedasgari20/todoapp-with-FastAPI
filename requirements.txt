@@ -5,3 +5,4 @@ alembic
 pytest
 factory-boy
 httpx
+requests
