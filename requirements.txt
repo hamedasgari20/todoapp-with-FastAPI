@@ -11,3 +11,4 @@ uvicorn[standard]
 aiosqlite
 asyncpg
 pydantic_settings
+factory-boy
