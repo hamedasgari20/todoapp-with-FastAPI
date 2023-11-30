@@ -10,3 +10,4 @@ fastapi-users[sqlalchemy]
 uvicorn[standard]
 aiosqlite
 asyncpg
+pydantic_settings
