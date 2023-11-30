@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.models.task import Task
+from app.db.model import Task
 from app.schemas.task import TaskResponse
 
 router = APIRouter()

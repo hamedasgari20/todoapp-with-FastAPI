@@ -1,3 +1,4 @@
+from sqlalchemy import Column, DateTime, func
 from sqlalchemy.orm import Session
 
 from app.db.database import Base
@@ -5,6 +6,9 @@ from app.db.database import Base
 
 class BaseModel(Base):
     __abstract__ = True
+
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
     @classmethod
     def get(cls, db: Session, model_id: int):
