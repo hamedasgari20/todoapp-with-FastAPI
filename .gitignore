@@ -19,6 +19,7 @@ docs_build
 site_build
 venv
 .env
+./.env
 docs.zip
 archive.zip
 

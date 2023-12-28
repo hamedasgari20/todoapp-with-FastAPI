@@ -6,7 +6,7 @@ pytest
 factory-boy
 httpx
 requests
-fastapi-users[sqlalchemy]
+python-jose
 uvicorn[standard]
 aiosqlite
 asyncpg

@@ -4,9 +4,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = "Awesome API"
-    admin_email: str
-    items_per_user: int = 50
+    DATABASE_URL: str
+    SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+
     model_config = SettingsConfigDict(env_file=".env")
 
 
