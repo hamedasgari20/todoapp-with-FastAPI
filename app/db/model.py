@@ -15,6 +15,6 @@ class UserDB(BaseModel):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String)
-    password = Column(String)
-    disabled = Column(Boolean)
+    username = Column(String, unique=True, nullable=False)
+    hashed_password = Column(String)
+    disabled = Column(Boolean, default=False)

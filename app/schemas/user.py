@@ -8,20 +8,17 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str | None = None
-    scopes: list[str] = []
 
 
-class User(BaseModel):
+class UserBase(BaseModel):
+    """Base model representing common user attributes."""
     username: str
-    email: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
 
 
-class UserInDB(BaseModel):
-    username: str
+class UserCreate(UserBase):
     password: str
 
 
-class UserResponse(BaseModel):
-    username: str
+class User(UserBase):
+    """Model representing a user."""
+    pass
